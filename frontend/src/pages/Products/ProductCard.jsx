@@ -10,75 +10,67 @@ const ProductCard = ({ p }) => {
 
   const addToCartHandler = (product, qty) => {
     dispatch(addToCart({ ...product, qty }));
-    toast.success("Item added successfully", {
-      position: toast.POSITION.TOP_RIGHT,
-      autoClose: 2000,
+    toast.success("Added to Collection", {
+      position: "top-right",
+      autoClose: 1500,
+      theme: "dark",
     });
   };
 
   return (
-    <div className="max-w-sm relative bg-[#1A1A1A] rounded-lg shaodw dark:bg-gray-800 dark:border-gray-700">
-      <section className="relative">
-        <Link to={`/product/${p._id}`}>
-          <span className="absolute bottom-3 right-3 bg-pink-100 text-pink-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-pink-900 dark:text-pink-300">
-            {p?.brand}
-          </span>
+    <div className="w-full h-full flex flex-col group animate-fade-in border border-white/5 bg-zinc-950 p-2 rounded-sm hover:border-emerald-500/20 hover:bg-white/[0.02] transition-all">
+      {/* Product Image Area */}
+      <section className="relative aspect-[3/4] overflow-hidden rounded-sm bg-zinc-900 border border-white/5">
+        <Link to={`/product/${p?._id}`}>
           <img
-            className="cursor-pointer w-full"
+            className="cursor-pointer w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 opacity-80 group-hover:opacity-100"
             src={p.image}
             alt={p.name}
-            style={{ height: "170px", objectFit: "cover" }}
           />
         </Link>
-        <HeartIcon product={p} />
-      </section>
-
-      <div className="p-5">
-        <div className="flex justify-between">
-          <h5 className="mb-2 text-xl text-whiet dark:text-white">{p?.name}</h5>
-
-          <p className="text-black font-semibold text-pink-500">
-            {p?.price?.toLocaleString("en-US", {
-              style: "currency",
-              currency: "USD",
-            })}
-          </p>
+        <div className="absolute top-4 right-4 z-10">
+          <HeartIcon product={p} />
         </div>
 
-        <p className="mb-3 font-normal text-[#CFCFCF]">
-          {p?.description?.substring(0, 60)} ...
-        </p>
-
-        <section className="flex justify-between items-center">
-          <Link
-            to={`/product/${p._id}`}
-            className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-pink-700 rounded-lg hover:bg-pink-800 focus:ring-4 focus:outline-none focus:ring-pink-300 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800"
-          >
-            Read More
-            <svg
-              className="w-3.5 h-3.5 ml-2"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 14 10"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M1 5h12m0 0L9 1m4 4L9 9"
-              />
-            </svg>
-          </Link>
-
+        {/* Purchase Hover Action */}
+        <div className="absolute inset-x-0 bottom-6 px-6 translate-y-24 group-hover:translate-y-0 transition-all duration-300 ease-in-out opacity-0 group-hover:opacity-100 z-10">
           <button
-            className="p-2 rounded-full"
             onClick={() => addToCartHandler(p, 1)}
+            className="w-full bg-emerald-500 text-black font-black py-4 rounded-sm shadow-2xl tracking-[0.2em] font-inter uppercase text-[10px] hover:bg-emerald-400 active:scale-95 transition-all flex items-center justify-center gap-2"
           >
-            <AiOutlineShoppingCart size={25} />
+            <AiOutlineShoppingCart size={16} />
+            <span>Purchase</span>
           </button>
-        </section>
+        </div>
+
+        {/* Verification Tag */}
+        <div className="absolute bottom-4 left-4 pointer-events-none">
+          <span className="bg-black/80 backdrop-blur-md text-gray-500 text-[8px] font-black tracking-widest px-3 py-1 rounded-sm border border-white/10 uppercase">
+            Verified Asset
+          </span>
+        </div>
+      </section>
+
+      {/* Info Content */}
+      <div className="pt-6 pb-4 px-3 flex flex-col gap-4">
+        <div className="flex flex-col gap-1">
+          <div className="flex justify-between items-baseline gap-4">
+            <span className="text-gray-700 font-extrabold tracking-widest text-[9px] uppercase">Peak Item</span>
+            <span className="text-lg font-black text-white font-inter tracking-tighter">
+              NRP {p?.price}
+            </span>
+          </div>
+
+          <Link to={`/product/${p?._id}`} className="block group/title">
+            <h2 className="text-sm font-bold text-white/90 line-clamp-1 group-hover/title:text-emerald-500 transition-colors uppercase leading-tight font-inter tracking-tight">
+              {p?.name}
+            </h2>
+          </Link>
+        </div>
+
+        <div className="flex items-center gap-3 pt-3 text-gray-700 text-[9px] font-extrabold tracking-[0.2em] uppercase border-t border-white/5">
+          <span className="opacity-70 truncate">{p?.description?.substring(0, 40)}...</span>
+        </div>
       </div>
     </div>
   );

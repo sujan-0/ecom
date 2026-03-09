@@ -1,6 +1,6 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
   :root {
@@ -47,7 +47,14 @@
 
 body {
   background-color: #06080a;
-  /* Very deep, professional slate-navy */
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(158, 94%, 40%, 0.05) 0, transparent 50%), 
+    radial-gradient(at 50% 0%, hsla(220, 20%, 6%, 1) 0, transparent 50%), 
+    radial-gradient(at 100% 0%, hsla(158, 94%, 40%, 0.05) 0, transparent 50%), 
+    radial-gradient(at 50% 50%, hsla(220, 20%, 4%, 1) 0, transparent 50%),
+    radial-gradient(at 0% 100%, hsla(158, 94%, 40%, 0.03) 0, transparent 50%), 
+    radial-gradient(at 100% 100%, hsla(158, 94%, 40%, 0.03) 0, transparent 50%);
+  background-attachment: fixed;
   color: hsl(var(--foreground));
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   line-height: 1.5;

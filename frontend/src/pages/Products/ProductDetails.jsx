@@ -132,7 +132,7 @@ const ProductDetails = () => {
                 </div>
                 <div className="flex items-center gap-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
                   <FaClock className="text-emerald-500/40" size={14} />
-                  <span>Dropped: {moment(product.createAt).fromNow()}</span>
+                  <span>Dropped: {moment(product.createdAt).fromNow()}</span>
                 </div>
                 <div className="flex items-center gap-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
                   <FaStore className="text-emerald-500/40" size={14} />

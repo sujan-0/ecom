@@ -66,8 +66,8 @@ const Navigation = () => {
             Collections
           </Link>
           <div className="w-px h-4 bg-white/10" />
-          <Link to="/favorite" className="flex items-center gap-2 group">
-            <FaHeart size={14} className="text-gray-500 group-hover:text-emerald-500 transition-colors" />
+          <Link to="/favorite" className="relative group">
+            <FaHeart size={20} className="text-gray-500 group-hover:text-emerald-500 transition-colors" />
             <FavoritesCount />
           </Link>
           <Link to="/cart" className="relative group">

@@ -8,68 +8,72 @@ import HeartIcon from "./HeartIcon";
 const ProductCard = ({ p }) => {
   const dispatch = useDispatch();
 
-  const addToCartHandler = (product, qty) => {
-    dispatch(addToCart({ ...product, qty }));
-    toast.success("Added to Collection", {
-      position: "top-right",
-      autoClose: 1500,
-      theme: "dark",
-    });
+  const addToCartHandler = (e) => {
+    e.preventDefault();
+    dispatch(addToCart({ ...p, qty: 1 }));
+    toast.success("Added to cart", { position: "top-right", autoClose: 1500, theme: "dark" });
   };
 
   return (
-    <div className="w-full h-full flex flex-col group animate-fade-in border border-white/5 bg-zinc-950 p-2 rounded-sm hover:border-emerald-500/20 hover:bg-white/[0.02] transition-all">
-      {/* Product Image Area */}
-      <section className="relative aspect-[3/4] overflow-hidden rounded-sm bg-zinc-900 border border-white/5">
+    <div className="group flex flex-col w-full bg-zinc-950 border border-white/5 rounded-xl overflow-hidden hover:border-brand-500/25 hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.6)] transition-all duration-300 h-full">
+      {/* Image */}
+      <div className="relative aspect-[3/4] overflow-hidden bg-zinc-900 flex-shrink-0">
         <Link to={`/product/${p?._id}`}>
           <img
-            className="cursor-pointer w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 opacity-80 group-hover:opacity-100"
             src={p.image}
             alt={p.name}
+            loading="lazy"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-85 group-hover:opacity-100"
           />
         </Link>
-        <div className="absolute top-4 right-4 z-10">
+
+        <div className="absolute top-3 right-3">
           <HeartIcon product={p} />
         </div>
 
-        {/* Purchase Hover Action */}
-        <div className="absolute inset-x-0 bottom-6 px-6 translate-y-24 group-hover:translate-y-0 transition-all duration-300 ease-in-out opacity-0 group-hover:opacity-100 z-10">
+        {p.countInStock === 0 && (
+          <div className="absolute top-3 left-3">
+            <span className="badge-danger">Out of Stock</span>
+          </div>
+        )}
+
+        <div className="absolute inset-x-0 bottom-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">
           <button
-            onClick={() => addToCartHandler(p, 1)}
-            className="w-full bg-emerald-500 text-black font-black py-4 rounded-sm shadow-2xl tracking-[0.2em] font-inter uppercase text-[10px] hover:bg-emerald-400 active:scale-95 transition-all flex items-center justify-center gap-2"
+            onClick={addToCartHandler}
+            disabled={p.countInStock === 0}
+            className="btn-primary w-full py-3 gap-2"
           >
-            <AiOutlineShoppingCart size={16} />
-            <span>Purchase</span>
+            <AiOutlineShoppingCart size={15} />
+            Add to Cart
           </button>
         </div>
+      </div>
 
-        {/* Verification Tag */}
-        <div className="absolute bottom-4 left-4 pointer-events-none">
-          <span className="bg-black/80 backdrop-blur-md text-gray-500 text-[8px] font-black tracking-widest px-3 py-1 rounded-sm border border-white/10 uppercase">
-            Verified Asset
-          </span>
-        </div>
-      </section>
-
-      {/* Info Content */}
-      <div className="pt-6 pb-4 px-3 flex flex-col gap-4">
-        <div className="flex flex-col gap-1">
-          <div className="flex justify-between items-baseline gap-4">
-            <span className="text-gray-700 font-extrabold tracking-widest text-[9px] uppercase">Peak Item</span>
-            <span className="text-lg font-black text-white font-inter tracking-tighter">
-              NRP {p?.price}
-            </span>
-          </div>
-
-          <Link to={`/product/${p?._id}`} className="block group/title">
-            <h2 className="text-sm font-bold text-white/90 line-clamp-1 group-hover/title:text-emerald-500 transition-colors uppercase leading-tight font-inter tracking-tight">
+      {/* Details */}
+      <div className="p-4 flex flex-col gap-2 flex-1">
+        <div className="flex items-start justify-between gap-2">
+          <Link to={`/product/${p?._id}`} className="flex-1 min-w-0">
+            <h2 className="text-sm font-semibold text-white leading-snug line-clamp-2 hover:text-brand-400 transition-colors">
               {p?.name}
             </h2>
           </Link>
+          <span className="text-sm font-bold text-white whitespace-nowrap">
+            NRP {p?.price?.toLocaleString()}
+          </span>
         </div>
 
-        <div className="flex items-center gap-3 pt-3 text-gray-700 text-[9px] font-extrabold tracking-[0.2em] uppercase border-t border-white/5">
-          <span className="opacity-70 truncate">{p?.description?.substring(0, 40)}...</span>
+        {p?.description && (
+          <p className="text-xs text-zinc-600 line-clamp-2 leading-relaxed">
+            {p.description}
+          </p>
+        )}
+
+        <div className="flex items-center gap-2 mt-auto pt-2">
+          {p.countInStock > 0 ? (
+            <span className="badge-brand">In Stock</span>
+          ) : (
+            <span className="badge-danger">Out of Stock</span>
+          )}
         </div>
       </div>
     </div>

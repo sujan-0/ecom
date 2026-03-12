@@ -7,7 +7,7 @@ const FavoritesCount = () => {
   return (
     <>
       {favoriteCount > 0 && (
-        <span className="absolute -top-2 -right-2 w-4 h-4 bg-emerald-500 text-[10px] font-bold text-black rounded-full flex items-center justify-center">
+        <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-red-500 text-white text-[9px] font-black rounded-full flex items-center justify-center px-1 leading-none">
           {favoriteCount}
         </span>
       )}

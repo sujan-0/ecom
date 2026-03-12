@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useGetTopProductsQuery } from "../redux/api/productApiSlice";
 import Loader from "./Loader";
 import SmallProduct from "../pages/Products/SmallProduct";
@@ -8,63 +9,59 @@ const Header = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center py-24 min-h-[500px] border border-white/5 rounded-sm animate-pulse relative overflow-hidden bg-black/20">
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-          <Loader />
-        </div>
+      <div className="flex justify-center items-center min-h-[480px] rounded-2xl border border-white/5 bg-white/[0.01]">
+        <Loader size="lg" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center py-24 text-emerald-500 font-black border border-emerald-500/20 rounded-sm animate-fade-in uppercase tracking-widest text-sm bg-emerald-500/5">
-        Sync Failure: Unable to retrieve collection peaks.
+      <div className="flex items-center justify-center min-h-[200px] rounded-2xl border border-red-500/20 bg-red-500/5 text-red-400 text-sm font-medium">
+        Failed to load featured products.
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col lg:grid lg:grid-cols-12 gap-12 lg:min-h-[550px] animate-fade-in relative">
-      {/* High-Performance Carousel Section */}
-      <div className="lg:col-span-8 overflow-hidden rounded-sm border border-white/5 bg-zinc-950 p-2 group transition-all relative">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[520px]">
+      {/* Carousel — takes 8 cols */}
+      <div className="lg:col-span-8 relative rounded-2xl overflow-hidden border border-white/5 bg-zinc-950">
         <ProductCarousel />
 
-        {/* Hero Floating Meta */}
-        <div className="absolute top-10 left-10 z-20 pointer-events-none">
-          <div className="bg-black/80 backdrop-blur-md px-5 py-2.5 rounded-sm flex items-center gap-2 border border-white/10">
-            <span className="text-[10px] font-black tracking-[0.3em] text-white uppercase">MERO STORE COLLECTION</span>
+        {/* Floating label */}
+        <div className="absolute top-5 left-5 z-20 pointer-events-none">
+          <div className="flex items-center gap-2 bg-black/70 backdrop-blur-md px-4 py-2 rounded-lg border border-white/10">
+            <span className="w-2 h-2 rounded-full bg-brand-500 animate-pulse" />
+            <span className="text-[10px] font-bold tracking-[0.2em] text-white uppercase">Featured Collection</span>
           </div>
         </div>
       </div>
 
-      {/* Featured & Mini-Grid Section */}
-      <div className="lg:col-span-4 flex flex-col gap-10 h-full">
-        <div className="p-10 border border-white/5 rounded-sm bg-black/20 flex flex-col gap-8 h-full relative overflow-hidden group">
-          {/* Section BG Decor */}
-          <div className="absolute bottom-0 right-0 w-40 h-40 bg-emerald-500/5 blur-[80px] rounded-full -z-10" />
+      {/* Top picks panel — 4 cols */}
+      <div className="lg:col-span-4 flex flex-col gap-5">
+        {/* Heading */}
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-bold text-white">Top Picks</h3>
+          <Link to="/shop" className="text-xs text-brand-400 hover:text-brand-300 font-semibold transition-colors">
+            View all →
+          </Link>
+        </div>
 
-          <div className="flex justify-between items-center px-2">
-            <h3 className="text-2xl font-black text-white tracking-tighter uppercase font-inter leading-none">TOP <span className="text-emerald-500">PICKS</span></h3>
-            <span className="text-[10px] font-black text-gray-700 tracking-[0.2em] uppercase">VERIFIED</span>
-          </div>
+        {/* Small products list */}
+        <div className="space-y-3 flex-1">
+          {data?.slice(0, 4).map((product) => (
+            <SmallProduct key={product._id} product={product} />
+          ))}
+        </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-1 gap-6 flex-grow">
-            {data?.slice(0, 3).map((product) => (
-              <div key={product._id} className="transition-all hover:scale-105 active:scale-95 group/small-item">
-                <SmallProduct product={product} />
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-6 pt-10 border-t border-white/5 flex flex-col items-center text-center gap-6">
-            <div className="space-y-2">
-              <h4 className="text-lg font-black text-white uppercase tracking-tight">GLOBAL AVAILABILITY</h4>
-              <p className="text-[10px] text-gray-600 font-bold uppercase tracking-[0.2em]">Shipping Worldwide Coverage</p>
-            </div>
-
-            <button className="w-full bg-emerald-500 text-black font-black py-5 px-10 rounded-sm text-[10px] hover:bg-emerald-400 transition-all uppercase tracking-widest active:scale-95">Enroll Membership</button>
-          </div>
+        {/* CTA card */}
+        <div className="mt-auto p-6 rounded-xl border border-brand-500/20 bg-brand-500/5 space-y-4">
+          <p className="text-sm font-semibold text-white">New member benefits</p>
+          <p className="text-xs text-zinc-500 leading-relaxed">Get 10% off your first order when you create a free account today.</p>
+          <Link to="/register" className="btn-primary w-full py-3 text-xs">
+            Join Free
+          </Link>
         </div>
       </div>
     </div>

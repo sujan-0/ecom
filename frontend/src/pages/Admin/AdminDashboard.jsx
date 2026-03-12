@@ -5,141 +5,110 @@ import {
   useGetTotalSalesByDateQuery,
   useGetTotalSalesQuery,
 } from "../../redux/api/orderApiSlice";
-
 import { useState, useEffect } from "react";
 import AdminMenu from "./AdminMenu";
-import OrderList from "./OrderList";
 import Loader from "../../components/Loader";
+
+const StatCard = ({ title, value, icon, color, isLoading }) => (
+  <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex items-center gap-5">
+    <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl font-black flex-shrink-0 ${color}`}>
+      {icon}
+    </div>
+    <div>
+      <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">{title}</p>
+      <p className="text-2xl font-black text-slate-900 mt-1">
+        {isLoading ? <span className="skeleton inline-block w-20 h-7" /> : value}
+      </p>
+    </div>
+  </div>
+);
 
 const AdminDashboard = () => {
   const { data: sales, isLoading } = useGetTotalSalesQuery();
-  const { data: customers, isLoading: loading } = useGetUsersQuery();
-  const { data: orders, isLoading: loadingTwo } = useGetTotalOrdersQuery();
+  const { data: customers, isLoading: loadingC } = useGetUsersQuery();
+  const { data: orders, isLoading: loadingO } = useGetTotalOrdersQuery();
   const { data: salesDetail } = useGetTotalSalesByDateQuery();
 
-  const [state, setState] = useState({
+  const [chartState, setChartState] = useState({
     options: {
-      chart: {
-        type: "line",
+      chart: { type: "area", toolbar: { show: false }, background: "transparent" },
+      tooltip: { theme: "light" },
+      colors: ["#10b981"],
+      dataLabels: { enabled: false },
+      stroke: { curve: "smooth", width: 2 },
+      fill: {
+        type: "gradient",
+        gradient: { shadeIntensity: 1, opacityFrom: 0.25, opacityTo: 0.02 },
       },
-      tooltip: {
-        theme: "dark",
-      },
-      colors: ["#00E396"],
-      dataLabels: {
-        enabled: true,
-      },
-      stroke: {
-        curve: "smooth",
-      },
-      title: {
-        text: "Sales Trend",
-        align: "left",
-      },
-      grid: {
-        borderColor: "#ccc",
-      },
-      markers: {
-        size: 1,
-      },
-      xaxis: {
-        categories: [],
-        title: {
-          text: "Date",
-        },
-      },
-      yaxis: {
-        title: {
-          text: "Sales",
-        },
-        min: 0,
-      },
-      legend: {
-        position: "top",
-        horizontalAlign: "right",
-        floating: true,
-        offsetY: -25,
-        offsetX: -5,
-      },
+      grid: { borderColor: "#f1f5f9", strokeDashArray: 4 },
+      xaxis: { categories: [], labels: { style: { colors: "#94a3b8", fontSize: "11px" } } },
+      yaxis: { labels: { style: { colors: "#94a3b8", fontSize: "11px" } }, min: 0 },
     },
-    series: [{ name: "Sales", data: [] }],
+    series: [{ name: "Sales (NRP)", data: [] }],
   });
 
   useEffect(() => {
     if (salesDetail) {
-      const formattedSalesDate = salesDetail.map((item) => ({
-        x: item._id,
-        y: item.totalSales,
-      }));
-
-      setState((prevState) => ({
-        ...prevState,
+      const formatted = salesDetail.map((item) => ({ x: item._id, y: item.totalSales }));
+      setChartState((prev) => ({
+        ...prev,
         options: {
-          ...prevState.options,
-          xaxis: {
-            categories: formattedSalesDate.map((item) => item.x),
-          },
+          ...prev.options,
+          xaxis: { ...prev.options.xaxis, categories: formatted.map((i) => i.x) },
         },
-
-        series: [
-          { name: "Sales", data: formattedSalesDate.map((item) => item.y) },
-        ],
+        series: [{ name: "Sales (NRP)", data: formatted.map((i) => i.y) }],
       }));
     }
   }, [salesDetail]);
 
   return (
-    <>
+    <div className="flex flex-col lg:flex-row gap-8 animate-fade-in">
       <AdminMenu />
 
-      <section className="xl:ml-[4rem] md:ml-[0rem]">
-        <div className="w-[80%] flex justify-around flex-wrap">
-          <div className="rounded-lg bg-black p-5 w-[20rem] mt-5">
-            <div className="font-bold rounded-full w-[3rem] bg-pink-500 text-center p-3">
-              $
-            </div>
-
-            <p className="mt-5">Sales</p>
-            <h1 className="text-xl font-bold">
-              $ {isLoading ? <Loader /> : sales.totalSales.toFixed(2)}
-            </h1>
-          </div>
-          <div className="rounded-lg bg-black p-5 w-[20rem] mt-5">
-            <div className="font-bold rounded-full w-[3rem] bg-pink-500 text-center p-3">
-              $
-            </div>
-
-            <p className="mt-5">Customers</p>
-            <h1 className="text-xl font-bold">
-              $ {isLoading ? <Loader /> : customers?.length}
-            </h1>
-          </div>
-          <div className="rounded-lg bg-black p-5 w-[20rem] mt-5">
-            <div className="font-bold rounded-full w-[3rem] bg-pink-500 text-center p-3">
-              $
-            </div>
-
-            <p className="mt-5">All Orders</p>
-            <h1 className="text-xl font-bold">
-              $ {isLoading ? <Loader /> : orders?.totalOrders}
-            </h1>
-          </div>
+      <div className="flex-1 space-y-8">
+        {/* Page header */}
+        <div>
+          <p className="text-overline text-brand-500 mb-1">Overview</p>
+          <h1 className="font-display text-3xl text-slate-900">Dashboard</h1>
         </div>
 
-        <div className="ml-[10rem] mt-[4rem]">
-          <Chart
-            options={state.options}
-            series={state.series}
-            type="bar"
-            width="70%"
+        {/* Stat cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <StatCard
+            title="Total Revenue"
+            value={`NRP ${sales?.totalSales?.toLocaleString() || "0"}`}
+            icon="💰"
+            color="bg-brand-500"
+            isLoading={isLoading}
+          />
+          <StatCard
+            title="Customers"
+            value={customers?.length || 0}
+            icon="👤"
+            color="bg-blue-500"
+            isLoading={loadingC}
+          />
+          <StatCard
+            title="Total Orders"
+            value={orders?.totalOrders || 0}
+            icon="📦"
+            color="bg-violet-500"
+            isLoading={loadingO}
           />
         </div>
 
-        <div className="mt-[4rem]">
-          <OrderList />
+        {/* Chart */}
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <p className="text-overline text-slate-400 mb-1">Analytics</p>
+              <h2 className="text-lg font-bold text-slate-900">Sales Over Time</h2>
+            </div>
+          </div>
+          <Chart options={chartState.options} series={chartState.series} type="area" height={280} />
         </div>
-      </section>
-    </>
+      </div>
+    </div>
   );
 };
 

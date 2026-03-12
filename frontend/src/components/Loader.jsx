@@ -1,6 +1,16 @@
-const Loader = () => {
+const Loader = ({ size = "md" }) => {
+  const sizes = {
+    sm: "w-5 h-5 border-2",
+    md: "w-10 h-10 border-[3px]",
+    lg: "w-16 h-16 border-4",
+  };
+
   return (
-    <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-pink-500 border-opacity-50"></div>
+    <div
+      className={`${sizes[size]} rounded-full border-white/10 border-t-brand-500 animate-spin`}
+      role="status"
+      aria-label="Loading"
+    />
   );
 };
 

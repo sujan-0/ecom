@@ -1,16 +1,19 @@
-const Message = ({ variant, children }) => {
-  const getVariantClass = () => {
-    switch (variant) {
-      case "succcess":
-        return "bg-green-100 text-green-800";
-      case "error":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-blue-100 text-blue-800";
-    }
-  };
+const variants = {
+  danger: { bg: "bg-red-500/10", border: "border-red-500/25", text: "text-red-400", icon: "✕" },
+  success: { bg: "bg-brand-500/10", border: "border-brand-500/25", text: "text-brand-400", icon: "✓" },
+  info: { bg: "bg-blue-500/10", border: "border-blue-500/25", text: "text-blue-400", icon: "ℹ" },
+  warning: { bg: "bg-yellow-500/10", border: "border-yellow-500/25", text: "text-yellow-400", icon: "!" },
+};
 
-  return <div className={`p-4 rounded ${getVariantClass()}`}>{children}</div>;
+const Message = ({ variant = "info", children }) => {
+  const style = variants[variant] || variants.info;
+
+  return (
+    <div className={`flex items-start gap-3 px-4 py-3 rounded-xl border ${style.bg} ${style.border}`}>
+      <span className={`flex-shrink-0 font-bold text-sm mt-0.5 ${style.text}`}>{style.icon}</span>
+      <p className={`text-sm leading-relaxed ${style.text}`}>{children}</p>
+    </div>
+  );
 };
 
 export default Message;

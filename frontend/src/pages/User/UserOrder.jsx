@@ -1,81 +1,80 @@
-import Message from "../../components/Message";
-import Loader from "../../components/Loader";
 import { Link } from "react-router-dom";
 import { useGetMyOrdersQuery } from "../../redux/api/orderApiSlice";
+import Loader from "../../components/Loader";
+import Message from "../../components/Message";
 
 const UserOrder = () => {
   const { data: orders, isLoading, error } = useGetMyOrdersQuery();
 
+  if (isLoading) return (
+    <div className="flex justify-center items-center py-40"><Loader size="lg" /></div>
+  );
+  if (error) return (
+    <Message variant="danger">{error?.data?.error || error.error}</Message>
+  );
+
   return (
-    <div className="container mx-auto">
-      <h2 className="text-2xl font-semibold mb-4">My Orders </h2>
+    <div className="max-w-4xl mx-auto animate-fade-in">
+      <div className="mb-8">
+        <p className="text-overline text-brand-500 mb-2">Account</p>
+        <h1 className="font-display text-3xl text-slate-900">My Orders</h1>
+        <p className="text-slate-500 text-sm mt-1">{orders?.length} orders placed</p>
+      </div>
 
-      {isLoading ? (
-        <Loader />
-      ) : error ? (
-        <Message variant="danger">{error?.data?.error || error.error}</Message>
+      {orders.length === 0 ? (
+        <div className="text-center py-24 bg-white rounded-2xl border border-slate-200">
+          <p className="text-slate-500 text-sm mb-4">You haven't placed any orders yet.</p>
+          <Link to="/shop" className="btn-primary">Start Shopping</Link>
+        </div>
       ) : (
-        <table className="w-full">
-          <thead>
-            <tr>
-              <td className="py-2">IMAGE</td>
-              <td className="py-2">ID</td>
-              <td className="py-2">DATE</td>
-              <td className="py-2">TOTAL</td>
-              <td className="py-2">PAID</td>
-              <td className="py-2">DELIVERED</td>
-              <td className="py-2"></td>
-            </tr>
-          </thead>
-
-          <tbody>
-            {orders.map((order) => (
-              <tr key={order._id}>
-                <img
-                  src={order.orderItems[0].image}
-                  alt={order.user}
-                  className="w-[6rem] mb-5"
-                />
-
-                <td className="py-2">{order._id}</td>
-                <td className="py-2">{order.createdAt.substring(0, 10)}</td>
-                <td className="py-2">$ {order.totalPrice}</td>
-
-                <td className="py-2">
-                  {order.isPaid ? (
-                    <p className="p-1 text-center bg-green-400 w-[6rem] rounded-full">
-                      Completed
-                    </p>
-                  ) : (
-                    <p className="p-1 text-center bg-red-400 w-[6rem] rounded-full">
-                      Pending
-                    </p>
-                  )}
-                </td>
-
-                <td className="px-2 py-2">
-                  {order.isDelivered ? (
-                    <p className="p-1 text-center bg-green-400 w-[6rem] rounded-full">
-                      Completed
-                    </p>
-                  ) : (
-                    <p className="p-1 text-center bg-red-400 w-[6rem] rounded-full">
-                      Pending
-                    </p>
-                  )}
-                </td>
-
-                <td className="px-2 py-2">
-                  <Link to={`/order/${order._id}`}>
-                    <button className="bg-pink-400 text-back py-2 px-3 rounded">
-                      View Details
-                    </button>
-                  </Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Order ID</th>
+                  <th>Date</th>
+                  <th>Total</th>
+                  <th>Payment</th>
+                  <th>Delivery</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map((order) => (
+                  <tr key={order._id}>
+                    <td>
+                      <img
+                        src={order.orderItems[0]?.image}
+                        alt="order"
+                        className="w-12 h-12 rounded-lg object-cover border border-slate-100"
+                      />
+                    </td>
+                    <td className="font-mono text-xs text-slate-400">#{order._id.slice(-8)}</td>
+                    <td className="text-slate-500 text-sm">{order.createdAt?.slice(0, 10)}</td>
+                    <td className="font-semibold text-slate-900">NRP {order.totalPrice?.toLocaleString()}</td>
+                    <td>
+                      {order.isPaid
+                        ? <span className="badge-brand">Paid</span>
+                        : <span className="badge-danger">Unpaid</span>}
+                    </td>
+                    <td>
+                      {order.isDelivered
+                        ? <span className="badge-brand">Delivered</span>
+                        : <span className="badge-danger">Pending</span>}
+                    </td>
+                    <td>
+                      <Link to={`/order/${order._id}`} className="text-brand-600 hover:text-brand-700 text-xs font-semibold transition-colors">
+                        View →
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       )}
     </div>
   );

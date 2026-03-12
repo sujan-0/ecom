@@ -1,107 +1,47 @@
-import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { FaTimes } from "react-icons/fa";
+import {
+  AiOutlineDashboard,
+  AiOutlineAppstore,
+  AiOutlineShoppingCart,
+  AiOutlineUnorderedList,
+  AiOutlineTeam,
+  AiOutlinePlusCircle,
+} from "react-icons/ai";
 
-const AdminMenu = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+const adminLinks = [
+  { label: "Dashboard", to: "/admin/dashboard", icon: <AiOutlineDashboard size={16} /> },
+  { label: "Add Product", to: "/admin/productlist", icon: <AiOutlinePlusCircle size={16} /> },
+  { label: "All Products", to: "/admin/allproductslist", icon: <AiOutlineShoppingCart size={16} /> },
+  { label: "Categories", to: "/admin/categorylist", icon: <AiOutlineAppstore size={16} /> },
+  { label: "Orders", to: "/admin/orderlist", icon: <AiOutlineUnorderedList size={16} /> },
+  { label: "Users", to: "/admin/userlist", icon: <AiOutlineTeam size={16} /> },
+];
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  return (
-    <>
-      <button
-        className={`${
-          isMenuOpen ? "top-2 right-2" : "top-5 right-7"
-        } bg-[#151515] p-2 fixed rounded-lg`}
-        onClick={toggleMenu}
-      >
-        {isMenuOpen ? (
-          <FaTimes color="white" />
-        ) : (
-          <>
-            <div className="w-6 h-0.5 bg-gray-200 my-1"></div>
-            <div className="w-6 h-0.5 bg-gray-200 my-1"></div>
-            <div className="w-6 h-0.5 bg-gray-200 my-1"></div>
-          </>
-        )}
-      </button>
-
-      {isMenuOpen && (
-        <section className="bg-[#151515] p-4 fixed right-7 top-5">
-          <ul className="list-none mt-2">
-            <li>
-              <NavLink
-                className="list-item py-2 px-3 block mb-5 hover:bg-[#2E2D2D] rounded-sm"
-                to="/admin/dashboard"
-                style={({ isActive }) => ({
-                  color: isActive ? "greenyellow" : "white",
-                })}
-              >
-                Admin Dashboard
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                className="list-item py-2 px-3 block mb-5 hover:bg-[#2E2D2D] rounded-sm"
-                to="/admin/categorylist"
-                style={({ isActive }) => ({
-                  color: isActive ? "greenyellow" : "white",
-                })}
-              >
-                Create Category
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                className="list-item py-2 px-3 block mb-5 hover:bg-[#2E2D2D] rounded-sm"
-                to="/admin/productlist"
-                style={({ isActive }) => ({
-                  color: isActive ? "greenyellow" : "white",
-                })}
-              >
-                Create Product
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                className="list-item py-2 px-3 block mb-5 hover:bg-[#2E2D2D] rounded-sm"
-                to="/admin/allproductslist"
-                style={({ isActive }) => ({
-                  color: isActive ? "greenyellow" : "white",
-                })}
-              >
-                All Products
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                className="list-item py-2 px-3 block mb-5 hover:bg-[#2E2D2D] rounded-sm"
-                to="/admin/userlist"
-                style={({ isActive }) => ({
-                  color: isActive ? "greenyellow" : "white",
-                })}
-              >
-                Manage Users
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                className="list-item py-2 px-3 block mb-5 hover:bg-[#2E2D2D] rounded-sm"
-                to="/admin/orderlist"
-                style={({ isActive }) => ({
-                  color: isActive ? "greenyellow" : "white",
-                })}
-              >
-                Manage Orders
-              </NavLink>
-            </li>
-          </ul>
-        </section>
-      )}
-    </>
-  );
-};
+const AdminMenu = () => (
+  <aside className="w-full lg:w-56 flex-shrink-0">
+    <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+      <div className="px-4 py-4 border-b border-slate-100">
+        <p className="text-[10px] font-black text-brand-600 tracking-[0.3em] uppercase">Admin Panel</p>
+      </div>
+      <nav className="p-2">
+        {adminLinks.map(({ label, to, icon }) => (
+          <NavLink
+            key={label}
+            to={to}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive
+                ? "bg-brand-50 text-brand-700 font-semibold"
+                : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+              }`
+            }
+          >
+            <span className="text-slate-400">{icon}</span>
+            {label}
+          </NavLink>
+        ))}
+      </nav>
+    </div>
+  </aside>
+);
 
 export default AdminMenu;

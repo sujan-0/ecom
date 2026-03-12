@@ -1,12 +1,11 @@
 import { useEffect } from "react";
-import { FaHeart, FaRegHeart, FaVaadin } from "react-icons/fa";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import {
   addToFavorites,
   removeFromFavorites,
   setFavorites,
 } from "../../redux/features/favorites/favoriteSlice";
-
 import {
   addFavoriteToLocalStorage,
   getFavoritesFromLocalStorage,
@@ -19,33 +18,32 @@ const HeartIcon = ({ product }) => {
   const isFavorite = favorites.some((p) => p._id === product._id);
 
   useEffect(() => {
-    const favoritesFromLocalStorage = getFavoritesFromLocalStorage();
-    dispatch(setFavorites(favoritesFromLocalStorage));
+    dispatch(setFavorites(getFavoritesFromLocalStorage()));
   }, []);
 
-  const toggleFavorites = () => {
+  const toggleFavorites = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (isFavorite) {
       dispatch(removeFromFavorites(product));
-      // remove the product from the localStorage as well
       removeFavoriteFromLocalStorage(product._id);
     } else {
       dispatch(addToFavorites(product));
-      // add the product to localStorage as well
       addFavoriteToLocalStorage(product);
     }
   };
 
   return (
-    <div
-      className="absolute top-2 right-5 cursor-pointer"
+    <button
       onClick={toggleFavorites}
+      className={`w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm border transition-all ${isFavorite
+          ? "bg-red-50 border-red-200 text-red-500 hover:bg-red-100"
+          : "bg-white/80 border-slate-200 text-slate-400 hover:text-red-500 hover:bg-red-50"
+        }`}
+      aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
     >
-      {isFavorite ? (
-        <FaHeart className="text-pink-500" />
-      ) : (
-        <FaRegHeart className="text-white" />
-      )}
-    </div>
+      {isFavorite ? <FaHeart size={13} /> : <FaRegHeart size={13} />}
+    </button>
   );
 };
 

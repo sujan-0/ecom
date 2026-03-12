@@ -2,90 +2,69 @@ import { Link } from "react-router-dom";
 import moment from "moment";
 import { useAllProductsQuery } from "../../redux/api/productApiSlice";
 import AdminMenu from "./AdminMenu";
+import Loader from "../../components/Loader";
 
 const AllProducts = () => {
   const { data: products, isLoading, isError } = useAllProductsQuery();
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  if (isLoading) return (
+    <div className="flex flex-col lg:flex-row gap-8">
+      <AdminMenu />
+      <div className="flex-1 flex justify-center items-center py-40"><Loader size="lg" /></div>
+    </div>
+  );
 
-  if (isError) {
-    return <div>Error loading products</div>;
-  }
+  if (isError) return (
+    <div className="flex flex-col lg:flex-row gap-8">
+      <AdminMenu />
+      <div className="flex-1 text-red-500 font-medium py-10">Failed to load products.</div>
+    </div>
+  );
 
   return (
-    <>
-      <div className="container mx-[9rem]">
-        <div className="flex flex-col  md:flex-row">
-          <div className="p-3">
-            <div className="ml-[2rem] text-xl font-bold h-12">
-              All Products ({products.length})
-            </div>
-            <div className="flex flex-wrap justify-around items-center">
-              {products.map((product) => (
-                <Link
-                  key={product._id}
-                  to={`/admin/product/update/${product._id}`}
-                  className="block mb-4 overflow-hidden"
-                >
-                  <div className="flex">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-[10rem] object-cover"
-                    />
-                    <div className="p-4 flex flex-col justify-around">
-                      <div className="flex justify-between">
-                        <h5 className="text-xl font-semibold mb-2">
-                          {product?.name}
-                        </h5>
+    <div className="flex flex-col lg:flex-row gap-8 animate-fade-in">
+      <AdminMenu />
 
-                        <p className="text-gray-400 text-xs">
-                          {moment(product.createdAt).format("MMMM Do YYYY")}
-                        </p>
-                      </div>
+      <div className="flex-1 space-y-6">
+        <div>
+          <p className="text-overline text-brand-500 mb-1">Inventory</p>
+          <h1 className="font-display text-3xl text-slate-900">All Products</h1>
+          <p className="text-slate-500 text-sm mt-1">{products?.length} products in catalog</p>
+        </div>
 
-                      <p className="text-gray-400 xl:w-[30rem] lg:w-[30rem] md:w-[20rem] sm:w-[10rem] text-sm mb-4">
-                        {product?.description?.substring(0, 160)}...
-                      </p>
-
-                      <div className="flex justify-between">
-                        <Link
-                          to={`/admin/product/update/${product._id}`}
-                          className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-pink-700 rounded-lg hover:bg-pink-800 focus:ring-4 focus:outline-none focus:ring-pink-300 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800"
-                        >
-                          Update Product
-                          <svg
-                            className="w-3.5 h-3.5 ml-2"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 14 10"
-                          >
-                            <path
-                              stroke="currentColor"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M1 5h12m0 0L9 1m4 4L9 9"
-                            />
-                          </svg>
-                        </Link>
-                        <p>$ {product?.price}</p>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-          <div className="md:w-1/4 p-3 mt-2">
-            <AdminMenu />
-          </div>
+        <div className="space-y-3">
+          {products?.map((product) => (
+            <Link
+              key={product._id}
+              to={`/admin/product/update/${product._id}`}
+              className="flex items-center gap-5 p-4 bg-white rounded-2xl border border-slate-200 hover:border-brand-400 hover:shadow-md transition-all group"
+            >
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-16 h-16 rounded-xl object-cover border border-slate-100 flex-shrink-0"
+              />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-4 flex-wrap">
+                  <h3 className="font-semibold text-slate-900 group-hover:text-brand-600 transition-colors truncate">{product.name}</h3>
+                  <span className="text-xs text-slate-400 whitespace-nowrap flex-shrink-0">
+                    {moment(product.createdAt).format("MMM D, YYYY")}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mt-1 line-clamp-1">{product.description?.substring(0, 100)}</p>
+                <div className="flex items-center gap-4 mt-2">
+                  <span className="text-sm font-bold text-slate-900">NRP {product.price?.toLocaleString()}</span>
+                  {product.countInStock > 0
+                    ? <span className="badge-brand">{product.countInStock} in stock</span>
+                    : <span className="badge-danger">Out of stock</span>}
+                </div>
+              </div>
+              <span className="text-slate-400 group-hover:text-brand-500 transition-colors flex-shrink-0">→</span>
+            </Link>
+          ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
